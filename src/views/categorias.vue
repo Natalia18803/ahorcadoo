@@ -81,9 +81,16 @@ export default {
         };
     },
     methods: {
-        irANivel() {
-            this.$router.push('/nivel');
-        }
+methods: {
+    irANivel() {
+        // Obtener la categoría actual del slide
+        const categoriaSeleccionada = this.slide.toLowerCase();
+        this.$router.push({ 
+            path: '/nivel', 
+            query: { categoria: categoriaSeleccionada } 
+        });
+    }
+}
     }
 };
 </script>

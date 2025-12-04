@@ -8,13 +8,29 @@
 </template>
 
 <script>
- export default {
+export default {
     name: "Nivel",
+    data() {
+        return {
+            categoria: '' // Aquí guardamos la categoría que viene de categorias.vue
+        }
+    },
+    mounted() {
+        // Al cargar la página, obtener la categoría
+        this.categoria = this.$route.query.categoria || 'animales';
+    },
     methods: {
         seleccionarNivel(nivel) {
-            this.$router.push({ path: '/juego', query: { nivel: nivel } });
+            // Enviar AMBOS: categoría y nivel al juego
+            this.$router.push({ 
+                path: '/juego', 
+                query: { 
+                    categoria: this.categoria, 
+                    nivel: nivel 
+                } 
+            });
         }
     }
- }
+}
 </script>
 
