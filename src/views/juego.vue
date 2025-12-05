@@ -2,19 +2,7 @@
   <q-page class="juego-page">
     <div class="game-container">
       <!-- Header -->
-      <div class="game-header">
-        <h1 class="game-title">¡Juega el Ahorcado!</h1>
-        <div class="stats">
-          <div class="stat-item">
-            <q-icon name="favorite" color="red" size="sm" />
-            <span>{{ vidas }}</span>
-          </div>
-          <div class="stat-item">
-            <q-icon name="emoji_events" color="yellow" size="sm" />
-            <span>{{ puntos }}</span>
-          </div>
-        </div>
-      </div>
+
 
       <!-- Área del ahorcado (dibujo) -->
       <div class="hangman-drawing">
