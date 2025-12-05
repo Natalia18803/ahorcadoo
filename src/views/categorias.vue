@@ -1,71 +1,151 @@
 <template>
-    <div>
-        <h1>¡Elije tu categoria!</h1>
-        <div class="q-pa-md game-container">
+    <div class="categorias-page">
+        <div class="header-section">
+            <h1 class="title">¡Elije tu categoria!</h1>
+        </div>
 
-        <q-carousel v-model="slide" transition-prev="scale" transition-next="scale" animated
-            control-color="white" navigation arrows height="300px"
-            class="text-white shadow-1 rounded-borders">
-            <template v-slot:navigation-icon="{ active, btnProps, onClick }">
-                <q-btn v-if="active" size="lg" color="yellow" flat round dense @click="onClick" />
-                <q-btn v-else size="sm" :icon="btnProps.icon" color="white" flat round dense @click="onClick" />
-            </template>
+        <div class="carousel-container">
+            <q-carousel
+                v-model="slide"
+                transition-prev="."
+                transition-next="slide-left"
+                animated
+                control-color="yellow"
+                navigation
+                arrows
+                height="500px"
+                class="categories-carousel"
+                swipeable
+                infinite
+            >
+                <template v-slot:navigation-icon="{ active, btnProps, onClick }">
+                    <q-btn
+                        v-if="active"
+                        size="lg"
+                        color="yellow"
+                        flat
+                        round
+                        dense
+                        @click="onClick"
+                        class="nav-btn active-nav"
+                    >
+                        <q-icon :name="btnProps.icon" />
+                    </q-btn>
+                    <q-btn
+                        v-else
+                        size="md"
+                        :icon="btnProps.icon"
+                        color="white"
+                        flat
+                        round
+                        dense
+                        @click="onClick"
+                        class="nav-btn"
+                    />
+                </template>
 
-            <q-carousel-slide name="Animales" class="column no-wrap flex-center">
-                <img src="https://www.shutterstock.com/image-vector/cute-pixel-art-8bit-animals-260nw-2205649371.jpg" @click="irANivel" style="cursor: pointer;">
+                <q-carousel-slide name="Animales" class="category-slide">
+                    <div class="slide-content" @click="irANivel">
+                        <div class="image-container">
+                            <img
+                                src="https://www.shutterstock.com/image-vector/cute-pixel-art-8bit-animals-260nw-2205649371.jpg"
+                                alt="Animales"
+                                class="category-image"
+                            >
+                           
+                        </div>
+                        <div class="category-label">
+                            <q-icon name="Animales" size="md" class="category-icon" />
+                        </div>
+                        <div class="click-hint">¡Haz clic para jugar!</div>
+                    </div>
+                </q-carousel-slide>
 
-                <div class="q-mt-md text-center">
-                    {{ Animales }}
-                </div>
-            </q-carousel-slide>
+                <q-carousel-slide name="Frutas" class="category-slide">
+                    <div class="slide-content" @click="irANivel">
+                        <div class="image-container">
+                            <img
+                                src="https://static.vecteezy.com/system/resources/thumbnails/024/274/734/small/pixel-fruit-icon-set-for-games-or-mobile-apps-colorful-pixel-art-old-style-8-bit-icons-collection-vector.jpg"
+                                alt="Frutas"
+                                class="category-image"
+                            >
+                           
+                        </div>
+                        <div class="category-label">
+                            <q-icon name="Frutas" size="md" class="category-icon" />
+                        </div>
+                    </div>
+                </q-carousel-slide>
 
+                <q-carousel-slide name="Paises" class="category-slide">
+                    <div class="slide-content" @click="irANivel">
+                        <div class="image-container">
+                            <img
+                                src="https://www.shutterstock.com/image-vector/pixel-country-flags-retro-flag-260nw-2485113497.jpg"
+                                alt="Países"
+                                class="category-image"
+                            >
+                       
+                        </div>
+                        <div class="category-label">
+                            <q-icon name="Paises" size="md" class="category-icon" />
+                        </div>
+                        <div class="click-hint">¡Haz clic para jugar!</div>
+                    </div>
+                </q-carousel-slide>
 
-            <q-carousel-slide name="Frutas" class="column no-wrap flex-center">
-                <img
-                    src="https://static.vecteezy.com/system/resources/thumbnails/024/274/734/small/pixel-fruit-icon-set-for-games-or-mobile-apps-colorful-pixel-art-old-style-8-bit-icons-collection-vector.jpg" @click="irANivel" style="cursor: pointer;">
+                <q-carousel-slide name="Deportes" class="category-slide">
+                    <div class="slide-content" @click="irANivel">
+                        <div class="image-container">
+                            <img
+                                src="https://www.shutterstock.com/image-vector/balls-different-sports-pixel-art-260nw-2438545609.jpg"
+                                alt="Deportes"
+                                class="category-image"
+                            >
+                         
+                        </div>
+                        <div class="category-label">
+                            <q-icon name="Deportes" size="md" class="category-icon" />
+                        </div>
+                        <div class="click-hint">¡Haz clic para jugar!</div>
+                    </div>
+                </q-carousel-slide>
 
-                <div class="q-mt-md text-center">
-                    {{ Frutas }}
-                </div>
-            </q-carousel-slide>
+                <q-carousel-slide name="peliculas" class="category-slide">
+                    <div class="slide-content" @click="irANivel">
+                        <div class="image-container">
+                            <img
+                                src="https://www.shutterstock.com/image-vector/vector-set-pixel-cinema-isolated-260nw-2110184660.jpg"
+                                alt="Películas"
+                                class="category-image"
+                            >
+                  
+                        </div>
+                        <div class="category-label">
+                            <q-icon name="Peliculas" size="md" class="category-icon" />
+                        </div>
+                        <div class="click-hint">¡Haz clic para jugar!</div>
+                    </div>
+                </q-carousel-slide>
 
-
-            <q-carousel-slide name="Paises" class="column no-wrap flex-center">
-                <img
-                    src="https://www.shutterstock.com/image-vector/pixel-country-flags-retro-flag-260nw-2485113497.jpg" @click="irANivel" style="cursor: pointer;">
-                <div class="q-mt-md text-center">
-                    {{ Paises }}
-                </div>
-            </q-carousel-slide>
-
-
-            <q-carousel-slide name="Deportes" class="column no-wrap flex-center">
-                <img
-                    src="https://www.shutterstock.com/image-vector/balls-different-sports-pixel-art-260nw-2438545609.jpg" @click="irANivel" style="cursor: pointer;">
-                <div class="q-mt-md text-center">
-                    {{ Deportes }}
-                </div>
-            </q-carousel-slide>
-
-            <q-carousel-slide name="peliculas" class="column no-wrap flex-center">
-                <img src="https://www.shutterstock.com/image-vector/vector-set-pixel-cinema-isolated-260nw-2110184660.jpg" @click="irANivel" style="cursor: pointer;">
-                <div class="q-mt-md text-center">
-                    {{ Peliculas }}
-                </div>
-            </q-carousel-slide>
-
-            <q-carousel-slide name="Ciencia" class="column no-wrap flex-center">
-                <img src="https://www.shutterstock.com/image-vector/science-laboratory-pixel-art-set-260nw-2138306659.jpg" @click="irANivel" style="cursor: pointer;">
-                <div class="q-mt-md text-center">
-                    {{ Ciencia }}
-                </div>
-            </q-carousel-slide>
-        </q-carousel>
-
-
+                <q-carousel-slide name="Ciencia" class="category-slide">
+                    <div class="slide-content" @click="irANivel">
+                        <div class="image-container">
+                            <img
+                                src="https://www.shutterstock.com/image-vector/science-laboratory-pixel-art-set-260nw-2138306659.jpg"
+                                alt="Ciencia"
+                                class="category-image"
+                            >
+  
+                        </div>
+                        <div class="category-label">
+                            <q-icon name="Ciencia" size="md" class="category-icon" />
+                        </div>
+                    </div>
+                </q-carousel-slide>
+            </q-carousel>
+        </div>
     </div>
-    </div>
-
 </template>
 
 <script>
@@ -73,13 +153,7 @@ export default {
     name: "Categorias",
     data() {
         return {
-            slide: "Animales",
-            Animales: "ANIMALES",
-            Frutas: "FRUTAS",
-            Paises: "PAISES",
-            Deportes: "DEPORTES",
-            Peliculas: "PELÍCULAS",
-            Ciencia: "CIENCIA"
+            slide: "Animales"
         };
     },
     methods: {
@@ -96,38 +170,3 @@ export default {
 </script>
 
 
-<style scoped>
-.q-carousel {
-  padding: 0;
-}
-
-.q-carousel-slide {
-  position: relative;
-  padding: 0;
-  height: 100%;
-}
-
-.q-carousel-slide img {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
-  cursor: pointer;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.q-carousel-slide .q-mt-md {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-  z-index: 1;
-}
-</style>

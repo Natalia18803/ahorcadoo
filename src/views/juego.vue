@@ -243,7 +243,7 @@ const nuevaPartida = () => {
 <style scoped lang="scss">
 .juego-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ffe09d 0%, #be8645 100%);
   padding: 20px;
   font-family: 'Press Start 2P', cursive;
 }
