@@ -2,32 +2,27 @@
   <q-page class="juego-page">
     <div class="game-container">
       <!-- Header -->
+      <div class="game-header">
+        <div class="game-title">Jugador: {{ username }}</div>
+        <div class="stats">
+          <div class="stat-item">
+            <q-icon name="schedule" />
+            {{ tiempoFormateado }}
+          </div>
+        </div>
+      </div>
 
-
-      <!-- Área del ahorcado (dibujo) -->
       <div class="hangman-drawing">
         <svg viewBox="0 0 200 250" class="hangman-svg">
-          <!-- Base -->
           <line x1="10" y1="230" x2="150" y2="230" stroke="#8B4513" stroke-width="4"/>
-          <!-- Poste vertical -->
           <line x1="50" y1="230" x2="50" y2="20" stroke="#8B4513" stroke-width="4"/>
-          <!-- Poste horizontal -->
           <line x1="50" y1="20" x2="130" y2="20" stroke="#8B4513" stroke-width="4"/>
-          <!-- Cuerda -->
           <line x1="130" y1="20" x2="130" y2="50" stroke="#8B4513" stroke-width="2"/>
-          
-          <!-- Partes del cuerpo (mostrar según errores) -->
-          <!-- Cabeza -->
           <circle v-if="errores >= 1" cx="130" cy="70" r="20" stroke="#333" stroke-width="3" fill="none"/>
-          <!-- Cuerpo -->
           <line v-if="errores >= 2" x1="130" y1="90" x2="130" y2="150" stroke="#333" stroke-width="3"/>
-          <!-- Brazo izquierdo -->
           <line v-if="errores >= 3" x1="130" y1="110" x2="100" y2="130" stroke="#333" stroke-width="3"/>
-          <!-- Brazo derecho -->
           <line v-if="errores >= 4" x1="130" y1="110" x2="160" y2="130" stroke="#333" stroke-width="3"/>
-          <!-- Pierna izquierda -->
           <line v-if="errores >= 5" x1="130" y1="150" x2="110" y2="190" stroke="#333" stroke-width="3"/>
-          <!-- Pierna derecha -->
           <line v-if="errores >= 6" x1="130" y1="150" x2="150" y2="190" stroke="#333" stroke-width="3"/>
         </svg>
       </div>
@@ -42,6 +37,12 @@
         >
           {{ letrasAdivinadas.includes(letra) || juegoTerminado ? letra : '' }}
         </div>
+      </div>
+
+      <!-- Pista -->
+      <div class="hint-display">
+        <q-icon name="lightbulb" />
+        {{ pista }}
       </div>
 
       <!-- Teclado -->
@@ -169,6 +170,15 @@ const juegoTerminado = ref(false)
 const gano = ref(false)
 const mostrarModal = ref(false)
 
+// Usuario y tiempo
+const username = ref(localStorage.getItem('username') || 'Jugador')
+const tiempoInicio = ref(Date.now())
+const tiempoActual = ref(0)
+const intervaloTiempo = ref(null)
+
+// Pista
+const pista = ref('')
+
 // Configuración del teclado en español
 const teclado = [
   ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
@@ -179,6 +189,13 @@ const teclado = [
 // Computed
 const palabraArray = computed(() => {
   return palabraActual.value.split('')
+})
+
+const tiempoFormateado = computed(() => {
+  const segundos = Math.floor(tiempoActual.value / 1000)
+  const minutos = Math.floor(segundos / 60)
+  const segundosRestantes = segundos % 60
+  return `${minutos.toString().padStart(2, '0')}:${segundosRestantes.toString().padStart(2, '0')}`
 })
 
 // Métodos
@@ -194,6 +211,25 @@ const iniciarJuego = () => {
   juegoTerminado.value = false
   gano.value = false
   mostrarModal.value = false
+
+  // Reiniciar tiempo
+  tiempoInicio.value = Date.now()
+  tiempoActual.value = 0
+  if (intervaloTiempo.value) clearInterval(intervaloTiempo.value)
+  intervaloTiempo.value = setInterval(() => {
+    tiempoActual.value = Date.now() - tiempoInicio.value
+  }, 100)
+
+  // Establecer pista según categoría
+  const pistas = {
+    animales: 'Un animal',
+    frutas: 'Una fruta',
+    paises: 'Un país',
+    deportes: 'Un deporte',
+    peliculas: 'Una película',
+    ciencia: 'Un concepto científico'
+  }
+  pista.value = pistas[categoria] || 'Una palabra'
 }
 
 // Inicializar el juego al montar el componente
@@ -203,18 +239,19 @@ onMounted(() => {
 
 const verificarLetra = (letra) => {
   if (letrasUsadas.value.includes(letra) || juegoTerminado.value) return
-  
+
   letrasUsadas.value.push(letra)
-  
+
   if (palabraActual.value.includes(letra)) {
     letrasAdivinadas.value.push(letra)
-    
+
     // Verificar si ganó
     const todasLasLetras = [...new Set(palabraActual.value.split(''))]
     if (todasLasLetras.every(l => letrasAdivinadas.value.includes(l))) {
       juegoTerminado.value = true
       gano.value = true
       puntos.value += 10
+      if (intervaloTiempo.value) clearInterval(intervaloTiempo.value)
       setTimeout(() => {
         mostrarModal.value = true
       }, 500)
@@ -222,11 +259,12 @@ const verificarLetra = (letra) => {
   } else {
     errores.value++
     vidas.value--
-    
+
     // Verificar si perdió
     if (errores.value >= 6) {
       juegoTerminado.value = true
       gano.value = false
+      if (intervaloTiempo.value) clearInterval(intervaloTiempo.value)
       setTimeout(() => {
         mostrarModal.value = true
       }, 500)
@@ -259,7 +297,7 @@ const nuevaPartida = () => {
   
   .game-title {
     color: white;
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     margin-bottom: 20px;
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
   }
@@ -304,7 +342,7 @@ const nuevaPartida = () => {
   margin-bottom: 40px;
   flex-wrap: wrap;
   padding: 0 20px;
-  
+
   .letter-box {
     width: 50px;
     height: 60px;
@@ -313,18 +351,32 @@ const nuevaPartida = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: bold;
     color: #667eea;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     border: 3px solid transparent;
     transition: all 0.3s ease;
-    
+
     &.revealed {
       border-color: #4caf50;
       animation: reveal 0.5s ease;
     }
   }
+}
+
+.hint-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 4px;
+  color: #667eea;
+  font-size: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes reveal {
