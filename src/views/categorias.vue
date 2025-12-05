@@ -1,6 +1,7 @@
 <template>
-    <h1>¡Elije tu categoria!</h1>
-    <div class="q-pa-md game-container">
+    <div>
+        <h1>¡Elije tu categoria!</h1>
+        <div class="q-pa-md game-container">
 
         <q-carousel v-model="slide" transition-prev="scale" transition-next="scale" animated
             control-color="white" navigation arrows height="300px"
@@ -31,8 +32,8 @@
 
             <q-carousel-slide name="Paises" class="column no-wrap flex-center">
                 <img
-                    src="https://www.shutterstock.com/image-vector/pixel-country-flags-retro-flag-260nw-2485113497.jpg">
-                <div class="q-mt-md text-center" @click="irANivel" style="cursor: pointer;">
+                    src="https://www.shutterstock.com/image-vector/pixel-country-flags-retro-flag-260nw-2485113497.jpg" @click="irANivel" style="cursor: pointer;">
+                <div class="q-mt-md text-center">
                     {{ Paises }}
                 </div>
             </q-carousel-slide>
@@ -40,8 +41,8 @@
 
             <q-carousel-slide name="Deportes" class="column no-wrap flex-center">
                 <img
-                    src="https://www.shutterstock.com/image-vector/balls-different-sports-pixel-art-260nw-2438545609.jpg">
-                <div class="q-mt-md text-center" @click="irANivel" style="cursor: pointer;">
+                    src="https://www.shutterstock.com/image-vector/balls-different-sports-pixel-art-260nw-2438545609.jpg" @click="irANivel" style="cursor: pointer;">
+                <div class="q-mt-md text-center">
                     {{ Deportes }}
                 </div>
             </q-carousel-slide>
@@ -55,13 +56,14 @@
 
             <q-carousel-slide name="Ciencia" class="column no-wrap flex-center">
                 <img src="https://www.shutterstock.com/image-vector/science-laboratory-pixel-art-set-260nw-2138306659.jpg" @click="irANivel" style="cursor: pointer;">
-                <div class="q-mt-md text-center" @click="irANivel" style="cursor: pointer;">
+                <div class="q-mt-md text-center">
                     {{ Ciencia }}
                 </div>
             </q-carousel-slide>
         </q-carousel>
 
-    
+
+    </div>
     </div>
 
 </template>
@@ -71,7 +73,7 @@ export default {
     name: "Categorias",
     data() {
         return {
-            slide: "style",
+            slide: "Animales",
             Animales: "ANIMALES",
             Frutas: "FRUTAS",
             Paises: "PAISES",
@@ -81,16 +83,14 @@ export default {
         };
     },
     methods: {
-methods: {
-    irANivel() {
-        // Obtener la categoría actual del slide
-        const categoriaSeleccionada = this.slide.toLowerCase();
-        this.$router.push({ 
-            path: '/nivel', 
-            query: { categoria: categoriaSeleccionada } 
-        });
-    }
-}
+        irANivel() {
+            // Obtener la categoría actual del slide
+            const categoriaSeleccionada = this.slide.toLowerCase();
+            this.$router.push({
+                path: '/nivel',
+                query: { categoria: categoriaSeleccionada }
+            });
+        }
     }
 };
 </script>
