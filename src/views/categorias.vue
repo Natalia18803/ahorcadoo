@@ -18,7 +18,7 @@
                 swipeable
                 infinite
             >
-                <template v-slot:navigation-icon="{ active, btnProps, onClick }">
+                <template v-slot:navigation-icon="{ active, onClick }">
                     <q-btn
                         v-if="active"
                         size="lg"

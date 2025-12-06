@@ -59,7 +59,7 @@
 
       <!-- Pista -->
       <div class="hint-display">
-        <q-icon name="lightbulb" />
+        <q-icon name="Pista" />
         {{ pista }}
       </div>
 
@@ -94,7 +94,6 @@
           color="primary"
           size="lg"
           label="Nueva Palabra"
-          icon="refresh"
           @click="nuevaPartida"
           class="new-game-btn"
         />
@@ -142,38 +141,120 @@ const route = useRoute()
 const categoria = route.query.categoria || 'animales'
 const nivel = route.query.nivel || 'facil'
 
-// Lista de palabras
+// Lista de palabras con pistas específicas
 // Banco de palabras por categoría y nivel
 const bancoPalabras = {
   animales: {
-    facil: ['GATO', 'PERRO', 'VACA', 'PATO', 'LORO'],
-    medio: ['JIRAFA', 'ELEFANTE', 'TIGRE', 'CONEJO'],
-    dificil: ['RINOCERONTE', 'MURCIELAGO', 'ORNITORRINCO']
+    facil: [
+      { palabra: 'GATO', pista: 'Animal doméstico que maúlla' },
+      { palabra: 'PERRO', pista: 'Mejor amigo del hombre' },
+      { palabra: 'VACA', pista: 'Animal que da leche' },
+      { palabra: 'PATO', pista: 'Ave acuática que nada' },
+      { palabra: 'LORO', pista: 'Ave colorida que habla' }
+    ],
+    medio: [
+      { palabra: 'JIRAFA', pista: 'Animal con cuello largo' },
+      { palabra: 'ELEFANTE', pista: 'Animal con trompa' },
+      { palabra: 'TIGRE', pista: 'Felino rayado' },
+      { palabra: 'CONEJO', pista: 'Animal con orejas largas' }
+    ],
+    dificil: [
+      { palabra: 'RINOCERONTE', pista: 'Animal con cuerno en la nariz' },
+      { palabra: 'MURCIELAGO', pista: 'Mamífero que vuela' },
+      { palabra: 'ORNITORRINCO', pista: 'Animal que pone huevos' }
+    ]
   },
   frutas: {
-    facil: ['MANZANA', 'PERA', 'UVA', 'KIWI'],
-    medio: ['SANDIA', 'NARANJA', 'PLATANO', 'MANGO'],
-    dificil: ['MARACUYA', 'GUANABANA', 'PITAHAYA']
+    facil: [
+      { palabra: 'MANZANA', pista: 'Fruta roja o verde' },
+      { palabra: 'PERA', pista: 'Fruta en forma de campana' },
+      { palabra: 'UVA', pista: 'Fruta pequeña en racimos' },
+      { palabra: 'KIWI', pista: 'Fruta verde con semillas' }
+    ],
+    medio: [
+      { palabra: 'SANDIA', pista: 'Fruta grande y jugosa' },
+      { palabra: 'NARANJA', pista: 'Fruta cítrica dulce' },
+      { palabra: 'PLATANO', pista: 'Fruta amarilla curva' },
+      { palabra: 'MANGO', pista: 'Fruta tropical dulce' }
+    ],
+    dificil: [
+      { palabra: 'MARACUYA', pista: 'Fruta ácida con semillas' },
+      { palabra: 'GUANABANA', pista: 'Fruta espinosa verde' },
+      { palabra: 'PITAHAYA', pista: 'Fruta con escamas rosas' }
+    ]
   },
   paises: {
-    facil: ['PERU', 'CHILE', 'CUBA', 'ITALIA'],
-    medio: ['COLOMBIA', 'ARGENTINA', 'BRASIL', 'ESPAÑA'],
-    dificil: ['TAILANDIA', 'AFGANISTAN', 'AZERBAIYAN']
+    facil: [
+      { palabra: 'PERU', pista: 'País de Sudamérica' },
+      { palabra: 'CHILE', pista: 'País largo y angosto' },
+      { palabra: 'CUBA', pista: 'Isla del Caribe' },
+      { palabra: 'ITALIA', pista: 'País con forma de bota' }
+    ],
+    medio: [
+      { palabra: 'COLOMBIA', pista: 'País de café famoso' },
+      { palabra: 'ARGENTINA', pista: 'País de tango' },
+      { palabra: 'BRASIL', pista: 'País más grande de Sudamérica' },
+      { palabra: 'ESPAÑA', pista: 'País de flamenco' }
+    ],
+    dificil: [
+      { palabra: 'TAILANDIA', pista: 'País de templos dorados' },
+      { palabra: 'AFGANISTAN', pista: 'País montañoso de Asia' },
+      { palabra: 'AZERBAIYAN', pista: 'País del Cáucaso' }
+    ]
   },
   deportes: {
-    facil: ['FUTBOL', 'TENIS', 'GOLF', 'BOXEO'],
-    medio: ['BALONCESTO', 'NATACION', 'CICLISMO'],
-    dificil: ['HALTEROFILIA', 'ESGRIMA', 'BADMINTON']
+    facil: [
+      { palabra: 'FUTBOL', pista: 'Deporte con balón redondo' },
+      { palabra: 'TENIS', pista: 'Deporte con raqueta' },
+      { palabra: 'GOLF', pista: 'Deporte con palos y hoyos' },
+      { palabra: 'BOXEO', pista: 'Deporte de combate' }
+    ],
+    medio: [
+      { palabra: 'BALONCESTO', pista: 'Deporte con canasta alta' },
+      { palabra: 'NATACION', pista: 'Deporte acuático' },
+      { palabra: 'CICLISMO', pista: 'Deporte con bicicleta' }
+    ],
+    dificil: [
+      { palabra: 'HALTEROFILIA', pista: 'Levantamiento de pesas' },
+      { palabra: 'ESGRIMA', pista: 'Combate con espada' },
+      { palabra: 'BADMINTON', pista: 'Deporte con volante' }
+    ]
   },
   peliculas: {
-    facil: ['TITANIC', 'AVATAR', 'FROZEN', 'COCO'],
-    medio: ['GLADIADOR', 'INCEPTION', 'INTERESTELAR'],
-    dificil: ['RATATOUILLE', 'SHAWSHANK', 'FORRESTGUMP']
+    facil: [
+      { palabra: 'TITANIC', pista: 'Barco que se hundió' },
+      { palabra: 'AVATAR', pista: 'Mundo azul alienígena' },
+      { palabra: 'FROZEN', pista: 'Hermanas y hielo' },
+      { palabra: 'COCO', pista: 'Música y Día de Muertos' }
+    ],
+    medio: [
+      { palabra: 'GLADIADOR', pista: 'Guerrero romano' },
+      { palabra: 'INCEPTION', pista: 'Sueños dentro de sueños' },
+      { palabra: 'INTERESTELAR', pista: 'Viaje espacial' }
+    ],
+    dificil: [
+      { palabra: 'RATATOUILLE', pista: 'Rata que cocina' },
+      { palabra: 'SHAWSHANK', pista: 'Prisión y esperanza' },
+      { palabra: 'FORRESTGUMP', pista: 'Hombre con vida extraordinaria' }
+    ]
   },
   ciencia: {
-    facil: ['ATOMO', 'CELULA', 'LUZ', 'SONIDO'],
-    medio: ['ELECTRON', 'MOLECULA', 'GRAVEDAD'],
-    dificil: ['MITOCONDRIA', 'FOTOSINTESIS', 'ELECTROMAGNETISMO']
+    facil: [
+      { palabra: 'ATOMO', pista: 'Parte más pequeña de la materia' },
+      { palabra: 'CELULA', pista: 'Unidad básica de vida' },
+      { palabra: 'LUZ', pista: 'Hace que podamos ver' },
+      { palabra: 'SONIDO', pista: 'Ondas que escuchamos' }
+    ],
+    medio: [
+      { palabra: 'ELECTRON', pista: 'Partícula con carga negativa' },
+      { palabra: 'MOLECULA', pista: 'Grupo de átomos' },
+      { palabra: 'GRAVEDAD', pista: 'Fuerza que nos mantiene en tierra' }
+    ],
+    dificil: [
+      { palabra: 'MITOCONDRIA', pista: 'Fábrica de energía celular' },
+      { palabra: 'FOTOSINTESIS', pista: 'Proceso de las plantas' },
+      { palabra: 'ELECTROMAGNETISMO', pista: 'Fuerza entre cargas eléctricas' }
+    ]
   }
 }
 
@@ -220,8 +301,9 @@ const tiempoFormateado = computed(() => {
 const iniciarJuego = () => {
   // Obtener palabras según categoría y nivel
   const palabrasDisponibles = bancoPalabras[categoria][nivel]
-  const palabraAleatoria = palabrasDisponibles[Math.floor(Math.random() * palabrasDisponibles.length)]
-  palabraActual.value = palabraAleatoria
+  const palabraSeleccionada = palabrasDisponibles[Math.floor(Math.random() * palabrasDisponibles.length)]
+  palabraActual.value = palabraSeleccionada.palabra
+  pista.value = palabraSeleccionada.pista
   letrasAdivinadas.value = []
   letrasUsadas.value = []
   errores.value = 0
@@ -237,17 +319,6 @@ const iniciarJuego = () => {
   intervaloTiempo.value = setInterval(() => {
     tiempoActual.value = Date.now() - tiempoInicio.value
   }, 100)
-
-  // Establecer pista según categoría
-  const pistas = {
-    animales: 'Un animal',
-    frutas: 'Una fruta',
-    paises: 'Un país',
-    deportes: 'Un deporte',
-    peliculas: 'Una película',
-    ciencia: 'Un concepto científico'
-  }
-  pista.value = pistas[categoria] || 'Una palabra'
 }
 
 // Inicializar el juego al montar el componente
