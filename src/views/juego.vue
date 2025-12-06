@@ -116,15 +116,6 @@
             </p>
             <p class="result-word">{{ palabraActual }}</p>
           </q-card-section>
-
-          <q-card-actions align="center">
-            <q-btn 
-              color="primary" 
-              label="Nueva Partida" 
-              @click="nuevaPartida"
-              size="md"
-            />
-          </q-card-actions>
         </q-card>
       </q-dialog>
     </div>
@@ -689,4 +680,5 @@ const nuevaPartida = () => {
     font-size: 0.7rem;
   }
 }
+
 </style>
