@@ -13,19 +13,24 @@
         </div>
         <div class="stats">
           <div class="stat-item">
-           
+
             <span class="stat-label">Tiempo:</span>
             {{ tiempoFormateado }}
           </div>
           <div class="stat-item">
-            
+
             <span class="stat-label">Vidas:</span>
             {{ vidas }}
           </div>
           <div class="stat-item">
-           
+
             <span class="stat-label">Puntos:</span>
             {{ puntos }}
+          </div>
+          <div class="stat-item">
+
+            <span class="stat-label">Racha:</span>
+            {{ victoriasConsecutivas }}/5
           </div>
         </div>
       </div>
@@ -118,12 +123,7 @@
           </q-card-section>
 
           <q-card-actions align="center">
-            <q-btn 
-              color="primary" 
-              label="Nueva Partida" 
-              @click="nuevaPartida"
-              size="md"
-            />
+           
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -265,6 +265,7 @@ const letrasUsadas = ref([])
 const errores = ref(0)
 const vidas = ref(6)
 const puntos = ref(0)
+const victoriasConsecutivas = ref(0)
 const juegoTerminado = ref(false)
 const gano = ref(false)
 const mostrarModal = ref(false)
@@ -339,7 +340,14 @@ const verificarLetra = (letra) => {
     if (todasLasLetras.every(l => letrasAdivinadas.value.includes(l))) {
       juegoTerminado.value = true
       gano.value = true
-      puntos.value += 10
+      victoriasConsecutivas.value++
+
+      // Otorgar puntos cada 5 victorias consecutivas
+      if (victoriasConsecutivas.value >= 5) {
+        puntos.value += 50 // 10 puntos x 5 palabras = 50 puntos
+        victoriasConsecutivas.value = 0 // Reiniciar contador
+      }
+
       if (intervaloTiempo.value) clearInterval(intervaloTiempo.value)
       setTimeout(() => {
         mostrarModal.value = true
@@ -353,6 +361,7 @@ const verificarLetra = (letra) => {
     if (errores.value >= 6) {
       juegoTerminado.value = true
       gano.value = false
+      victoriasConsecutivas.value = 0 // Reiniciar racha al perder
       if (intervaloTiempo.value) clearInterval(intervaloTiempo.value)
       setTimeout(() => {
         mostrarModal.value = true
