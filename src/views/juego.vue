@@ -3,11 +3,29 @@
     <div class="game-container">
       <!-- Header -->
       <div class="game-header">
-        <div class="game-title">Jugador: {{ username }}</div>
+        <div class="user-info">
+          <div class="user-avatar">
+          </div>
+          <div class="user-details">
+            <div class="username">{{ username }}</div>
+            <div class="user-meta">{{ categoria.toUpperCase() }} - {{ nivel.toUpperCase() }}</div>
+          </div>
+        </div>
         <div class="stats">
           <div class="stat-item">
-            <q-icon name="schedule" />
+           
+            <span class="stat-label">Tiempo:</span>
             {{ tiempoFormateado }}
+          </div>
+          <div class="stat-item">
+            
+            <span class="stat-label">Vidas:</span>
+            {{ vidas }}
+          </div>
+          <div class="stat-item">
+           
+            <span class="stat-label">Puntos:</span>
+            {{ puntos }}
           </div>
         </div>
       </div>
@@ -292,31 +310,73 @@ const nuevaPartida = () => {
 }
 
 .game-header {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 30px;
-  
-  .game-title {
-    color: white;
-    font-size: 1.4rem;
-    margin-bottom: 20px;
-    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-  }
-  
-  .stats {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+
+  .user-info {
     display: flex;
-    justify-content: center;
-    gap: 30px;
-    
-    .stat-item {
+    align-items: center;
+    gap: 15px;
+
+    .user-avatar {
       background: rgba(255, 255, 255, 0.2);
-      padding: 10px 20px;
-      border-radius: 10px;
+      border-radius: 50%;
+      padding: 10px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
+    }
+
+    .user-details {
+      .username {
+        color: white;
+        font-size: 0.8rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        margin-bottom: 5px;
+      }
+
+      .user-meta {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.6rem;
+        font-weight: normal;
+      }
+    }
+  }
+
+  .stats {
+    display: flex;
+    gap: 20px;
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 8px 12px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       color: white;
-      font-size: 1.2rem;
-      backdrop-filter: blur(10px);
+      font-size: 0.6rem;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .stat-label {
+        font-weight: bold;
+        opacity: 0.9;
+      }
     }
   }
 }
@@ -519,16 +579,39 @@ const nuevaPartida = () => {
 }
 
 @media (max-width: 600px) {
-  .game-header .game-title {
-    font-size: 1.2rem;
+  .game-header {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+
+    .user-info {
+      .user-details .username {
+        font-size: 0.7rem;
+      }
+
+      .user-details .user-meta {
+        font-size: 0.5rem;
+      }
+    }
+
+    .stats {
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+
+      .stat-item {
+        padding: 6px 10px;
+        font-size: 0.5rem;
+      }
+    }
   }
-  
+
   .word-display .letter-box {
     width: 40px;
     height: 50px;
     font-size: 1.2rem;
   }
-  
+
   .keyboard .key {
     width: 35px;
     height: 40px;

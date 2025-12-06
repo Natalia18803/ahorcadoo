@@ -29,12 +29,12 @@
                         @click="onClick"
                         class="nav-btn active-nav"
                     >
-                        <q-icon :name="btnProps.icon" />
+                    
                     </q-btn>
                     <q-btn
                         v-else
                         size="md"
-                        :icon="btnProps.icon"
+                        
                         color="white"
                         flat
                         round
