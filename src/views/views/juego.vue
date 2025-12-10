@@ -13,19 +13,24 @@
         </div>
         <div class="stats">
           <div class="stat-item">
-           
+
             <span class="stat-label">Tiempo:</span>
             {{ tiempoFormateado }}
           </div>
           <div class="stat-item">
-            
+
             <span class="stat-label">Vidas:</span>
             {{ vidas }}
           </div>
           <div class="stat-item">
-           
+
             <span class="stat-label">Puntos:</span>
             {{ puntos }}
+          </div>
+          <div class="stat-item">
+
+            <span class="stat-label">Racha:</span>
+            {{ victoriasConsecutivas }}/5
           </div>
         </div>
       </div>
@@ -97,85 +102,29 @@
           @click="nuevaPartida"
           class="new-game-btn"
         />
-        <q-btn
-          color="secondary"
-          size="md"
-          label="Volver a Niveles"
-          @click="volverANiveles"
-          class="back-btn"
-        />
-        <q-btn
-          color="info"
-          size="md"
-          label="Ver Resumen"
-          @click="mostrarResumen"
-          class="summary-btn"
-        />
       </div>
 
       <!-- Modal de victoria/derrota -->
       <q-dialog v-model="mostrarModal">
         <q-card class="result-card">
           <q-card-section class="result-header" :class="gano ? 'win' : 'lose'">
-            <q-icon
-              :name="gano ? 'celebration' : 'sentiment_dissatisfied'"
+            <q-icon 
+              :name="gano ? 'celebration' : 'sentiment_dissatisfied'" 
               size="xl"
             />
             <div class="result-title">{{ gano ? '¡Ganaste!' : '¡Perdiste!' }}</div>
           </q-card-section>
-
+          
           <q-card-section>
             <p class="result-text">
               {{ gano ? '¡Excelente trabajo!' : 'La palabra era:' }}
             </p>
             <p class="result-word">{{ palabraActual }}</p>
           </q-card-section>
-        </q-card>
-      </q-dialog>
 
-      <!-- Modal de resumen de participantes -->
-      <q-dialog v-model="mostrarModalResumen" maximized>
-        <q-card class="summary-card">
-          <q-card-section class="summary-header">
-            <div class="summary-title">Resumen de Participantes</div>
-            <q-btn
-              icon="close"
-              flat
-              round
-              @click="mostrarModalResumen = false"
-              class="close-btn"
-            />
-          </q-card-section>
-
-          <q-card-section class="summary-content">
-            <q-table
-              :rows="resumenParticipantes"
-              :columns="columns"
-              row-key="fecha"
-              class="summary-table"
-            >
-              <template v-slot:body-cell-gano="props">
-                <q-td :props="props">
-                  <q-icon
-                    :name="props.value ? 'check_circle' : 'cancel'"
-                    :color="props.value ? 'positive' : 'negative'"
-                    size="md"
-                  />
-                </q-td>
-              </template>
-            </q-table>
-
-            <div class="summary-actions">
-              <q-btn
-                color="negative"
-                size="md"
-                label="Reiniciar Todos los Datos"
-                @click="reiniciarLocalStorage"
-                icon="delete_forever"
-                class="reset-btn"
-              />
-            </div>
-          </q-card-section>
+          <q-card-actions align="center">
+           
+          </q-card-actions>
         </q-card>
       </q-dialog>
     </div>
@@ -185,11 +134,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 // Obtener parámetros de la ruta
 const route = useRoute()
-const router = useRouter()
 const categoria = route.query.categoria || 'animales'
 const nivel = route.query.nivel || 'facil'
 
@@ -317,6 +265,7 @@ const letrasUsadas = ref([])
 const errores = ref(0)
 const vidas = ref(6)
 const puntos = ref(0)
+const victoriasConsecutivas = ref(0)
 const juegoTerminado = ref(false)
 const gano = ref(false)
 const mostrarModal = ref(false)
@@ -329,9 +278,6 @@ const intervaloTiempo = ref(null)
 
 // Pista
 const pista = ref('')
-
-// Datos de juegos para reactividad
-const juegosData = ref(JSON.parse(localStorage.getItem('juegos') || '[]'))
 
 // Configuración del teclado en español
 const teclado = [
@@ -394,9 +340,15 @@ const verificarLetra = (letra) => {
     if (todasLasLetras.every(l => letrasAdivinadas.value.includes(l))) {
       juegoTerminado.value = true
       gano.value = true
-      puntos.value += 10
+      victoriasConsecutivas.value++
+
+      // Otorgar puntos cada 5 victorias consecutivas
+      if (victoriasConsecutivas.value >= 5) {
+        puntos.value += 50 // 10 puntos x 5 palabras = 50 puntos
+        victoriasConsecutivas.value = 0 // Reiniciar contador
+      }
+
       if (intervaloTiempo.value) clearInterval(intervaloTiempo.value)
-      guardarDatosJuego() // Guardar datos al ganar
       setTimeout(() => {
         mostrarModal.value = true
       }, 500)
@@ -409,8 +361,8 @@ const verificarLetra = (letra) => {
     if (errores.value >= 6) {
       juegoTerminado.value = true
       gano.value = false
+      victoriasConsecutivas.value = 0 // Reiniciar racha al perder
       if (intervaloTiempo.value) clearInterval(intervaloTiempo.value)
-      guardarDatosJuego() // Guardar datos al perder
       setTimeout(() => {
         mostrarModal.value = true
       }, 500)
@@ -422,131 +374,328 @@ const nuevaPartida = () => {
   iniciarJuego()
 }
 
-const volverANiveles = () => {
-  // Guardar datos del juego actual en localStorage
-  guardarDatosJuego()
-  // Navegar a niveles
-  route.push({
-    path: '/nivel',
-    query: { categoria: categoria }
-  })
-}
-
-const mostrarResumen = () => {
-  // Mostrar modal con resumen de participantes
-  mostrarModalResumen.value = true
-}
-
-const guardarDatosJuego = () => {
-  const datosJuego = {
-    username: username.value,
-    categoria: categoria,
-    nivel: nivel,
-    tiempo: tiempoActual.value,
-    puntos: puntos.value,
-    gano: gano.value,
-    palabra: palabraActual.value,
-    fecha: new Date().toISOString()
-  }
-
-  // Obtener datos existentes
-  const datosExistentes = JSON.parse(localStorage.getItem('juegos') || '[]')
-  datosExistentes.push(datosJuego)
-
-  // Guardar en localStorage
-  localStorage.setItem('juegos', JSON.stringify(datosExistentes))
-}
-
-// Estado para modal de resumen
-const mostrarModalResumen = ref(false)
-
-// Computed para resumen de participantes
-const resumenParticipantes = computed(() => {
-  const datos = JSON.parse(localStorage.getItem('juegos') || '[]')
-  return datos
-    .sort((a, b) => new Date(b.fecha) - new Date(a.fecha)) // Ordenar por fecha descendente
-    .map(juego => ({
-      ...juego,
-      tiempoFormateado: formatTime(juego.tiempo)
-    })) // Mostrar todos los juegos sin límite
-})
-
-// Columnas para la tabla de resumen
-const columns = [
-  {
-    name: 'username',
-    required: true,
-    label: 'Usuario',
-    align: 'left',
-    field: 'username',
-    sortable: true
-  },
-  {
-    name: 'categoria',
-    label: 'Categoría',
-    align: 'left',
-    field: 'categoria',
-    sortable: true
-  },
-  {
-    name: 'nivel',
-    label: 'Nivel',
-    align: 'left',
-    field: 'nivel',
-    sortable: true
-  },
-  {
-    name: 'tiempo',
-    label: 'Tiempo',
-    align: 'left',
-    field: 'tiempoFormateado',
-    sortable: true
-  },
-  {
-    name: 'puntos',
-    label: 'Puntos',
-    align: 'left',
-    field: 'puntos',
-    sortable: true
-  },
-  {
-    name: 'gano',
-    label: 'Resultado',
-    align: 'center',
-    field: 'gano',
-    sortable: true
-  },
-  {
-    name: 'fecha',
-    label: 'Fecha',
-    align: 'left',
-    field: 'fecha',
-    format: (val) => new Date(val).toLocaleString(),
-    sortable: true
-  }
-]
-
-// Método para formatear tiempo
-const formatTime = (tiempoMs) => {
-  const segundos = Math.floor(tiempoMs / 1000)
-  const minutos = Math.floor(segundos / 60)
-  const segundosRestantes = segundos % 60
-  return `${minutos.toString().padStart(2, '0')}:${segundosRestantes.toString().padStart(2, '0')}`
-}
-
-// Método para reiniciar localStorage
-const reiniciarLocalStorage = () => {
-  // Confirmar antes de borrar
-  if (confirm('¿Estás seguro de que quieres reiniciar todos los datos del juego? Esto borrará todo el historial de partidas.')) {
-    localStorage.clear();
-    alert('Datos reiniciados correctamente.');
-    // Cerrar el modal después de reiniciar
-    mostrarModalResumen.value = false;
-  }
-}
-
 </script>
 
 <style scoped lang="scss">
+.juego-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffe09d 0%, #be8645 100%);
+  padding: 20px;
+  font-family: 'Press Start 2P', cursive;
+}
 
+.game-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    .user-avatar {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-details {
+      .username {
+        color: white;
+        font-size: 0.8rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        margin-bottom: 5px;
+      }
+
+      .user-meta {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.6rem;
+        font-weight: normal;
+      }
+    }
+  }
+
+  .stats {
+    display: flex;
+    gap: 20px;
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 8px 12px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: white;
+      font-size: 0.6rem;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .stat-label {
+        font-weight: bold;
+        opacity: 0.9;
+      }
+    }
+  }
+}
+
+.hangman-drawing {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  margin: 0 auto 30px;
+  max-width: 300px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  
+  .hangman-svg {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.word-display {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  padding: 0 20px;
+
+  .letter-box {
+    width: 50px;
+    height: 60px;
+    background: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #667eea;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+
+    &.revealed {
+      border-color: #4caf50;
+      animation: reveal 0.5s ease;
+    }
+  }
+}
+
+.hint-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 4px;
+  color: #667eea;
+  font-size: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes reveal {
+  0% {
+    transform: rotateY(90deg);
+  }
+  100% {
+    transform: rotateY(0);
+  }
+}
+
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 30px;
+  
+  .keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .key {
+    width: 45px;
+    height: 50px;
+    background: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #667eea;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+      background: #f0f0f0;
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    &.key-used {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    &.key-correct {
+      background: #4caf50;
+      color: white;
+      animation: correct 0.5s ease;
+    }
+    
+    &.key-incorrect {
+      background: #f44336;
+      color: white;
+      animation: incorrect 0.5s ease;
+    }
+    
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+}
+
+@keyframes correct {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes incorrect {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+.game-actions {
+  text-align: center;
+  
+  .new-game-btn {
+    font-family: 'Press Start 2P', cursive;
+    padding: 15px 30px;
+    font-size: 0.9rem;
+  }
+}
+
+.result-card {
+  min-width: 300px;
+  
+  .result-header {
+    text-align: center;
+    padding: 30px;
+    color: white;
+    
+    &.win {
+      background: linear-gradient(135deg, #4caf50, #81c784);
+    }
+    
+    &.lose {
+      background: linear-gradient(135deg, #f44336, #e57373);
+    }
+    
+    .result-title {
+      font-size: 1.5rem;
+      margin-top: 15px;
+      font-family: 'Press Start 2P', cursive;
+    }
+  }
+  
+  .result-text {
+    text-align: center;
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .result-word {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #667eea;
+    font-family: 'Press Start 2P', cursive;
+  }
+}
+
+@media (max-width: 600px) {
+  .game-header {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+
+    .user-info {
+      .user-details .username {
+        font-size: 0.7rem;
+      }
+
+      .user-details .user-meta {
+        font-size: 0.5rem;
+      }
+    }
+
+    .stats {
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+
+      .stat-item {
+        padding: 6px 10px;
+        font-size: 0.5rem;
+      }
+    }
+  }
+
+  .word-display .letter-box {
+    width: 40px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+
+  .keyboard .key {
+    width: 35px;
+    height: 40px;
+    font-size: 0.7rem;
+  }
+}
 </style>

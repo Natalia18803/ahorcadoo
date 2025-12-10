@@ -5,9 +5,6 @@
                 <h1 class="level-title">¡Elije tu nivel!</h1>
                 <div class="category-display">{{ categoria.toUpperCase() }}</div>
             </div>
-            <div class="back-section">
-                <q-btn label="Volver" @click="goBack" class="back-btn" />
-            </div>
 
             <div class="level-buttons">
                 <button class="level-btn facil" @click="seleccionarNivel('facil')">
@@ -48,9 +45,6 @@ export default {
             });
         },
         volverACategorias() {
-            this.$router.push('/categorias');
-        },
-        goBack() {
             this.$router.push('/categorias');
         }
     }

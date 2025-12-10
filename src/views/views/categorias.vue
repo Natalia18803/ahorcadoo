@@ -1,7 +1,6 @@
 <template>
     <div class="categorias-page">
         <div class="header-section">
-            <q-btn label="Volver" @click="goBack" class="back-btn" />
             <h1 class="title">¡Elije tu categoria!</h1>
         </div>
 
@@ -56,7 +55,7 @@
                            
                         </div>
                         <div class="category-label">
-                            <span class="category-text">Animales</span>
+                            <q-icon name="Animales" size="md" class="category-icon" />
                         </div>
                         <div class="click-hint">¡Haz clic para jugar!</div>
                     </div>
@@ -73,7 +72,7 @@
                            
                         </div>
                         <div class="category-label">
-                            <span class="category-text">Frutas</span>
+                            <q-icon name="Frutas" size="md" class="category-icon" />
                         </div>
                     </div>
                 </q-carousel-slide>
@@ -89,7 +88,7 @@
                        
                         </div>
                         <div class="category-label">
-                            <span class="category-text">Países</span>
+                            <q-icon name="Paises" size="md" class="category-icon" />
                         </div>
                         <div class="click-hint">¡Haz clic para jugar!</div>
                     </div>
@@ -106,7 +105,7 @@
                          
                         </div>
                         <div class="category-label">
-                            <span class="category-text">Deportes</span>
+                            <q-icon name="Deportes" size="md" class="category-icon" />
                         </div>
                         <div class="click-hint">¡Haz clic para jugar!</div>
                     </div>
@@ -123,7 +122,7 @@
                   
                         </div>
                         <div class="category-label">
-                           <span class="category-text">Películas</span>
+                            <q-icon name="Peliculas" size="md" class="category-icon" />
                         </div>
                         <div class="click-hint">¡Haz clic para jugar!</div>
                     </div>
@@ -133,7 +132,7 @@
                     <div class="slide-content" @click="irANivel">
                         <div class="image-container">
                             <img
-                                src="https://as1.ftcdn.net/jpg/15/37/73/82/1000_F_1537738239_uq9aTJJmyJwEp86Noxzq7mBCscaeIZkZ.jpg"
+                                src="https://www.shutterstock.com/image-vector/science-laboratory-pixel-art-set-260nw-2138306659.jpg"
                                 alt="Ciencia"
                                 class="category-image"
                             >
@@ -165,9 +164,6 @@ export default {
                 path: '/nivel',
                 query: { categoria: categoriaSeleccionada }
             });
-        },
-        goBack() {
-            this.$router.go(-1);
         }
     }
 };
